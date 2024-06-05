@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 ###############手动修改##############
-name: JDCloud-AX1800-Pro-JiaY-shi
+name: JDCloud-AX1800-Pro
 
 on:
   repository_dispatch:
@@ -33,7 +33,7 @@ on:
 
 env:
   ###############手动修改##############
-  OPENWRT_NAME: JiaY-shi
+  OPENWRT_NAME: Microyin
   REPO_URL: https://github.com/JiaY-shi/openwrt
   REPO_BRANCH: ipq60xx-devel_nss
   FEEDS_CONF: feeds.conf.default
