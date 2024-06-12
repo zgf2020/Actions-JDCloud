@@ -105,7 +105,7 @@ jobs:
         rm -rf openwrt/package/libs/mbedtls
         cp -r JDCloud-AX1800-Pro/mbedtls-2.28.8 openwrt/package/libs/mbedtls
         cd openwrt
-        git apply jdc_ax1800-pro.patch
+        git apply 0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         
