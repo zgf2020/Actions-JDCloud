@@ -35,7 +35,7 @@ env:
   ###############手动修改##############
   OPENWRT_NAME: Microyin
   REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: ipq60xx-devel_nss
+  REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: JDCloud-AX1800-Pro/.config
   DIY_P1_SH: JDCloud-AX1800-Pro/diy-part1.sh
