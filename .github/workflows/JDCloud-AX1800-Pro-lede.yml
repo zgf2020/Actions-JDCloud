@@ -15,12 +15,12 @@ on:
   workflow_dispatch:
     inputs:
       TEMP:
-        description: 'Show soc status and wifi temperature on luci'
+        description: '在luci上显示soc状态和wifi 温度'
         required: true
         default: true
         type: boolean
       NO_DOCKERMAN:
-        description: 'Not build luci-app-dockerman'
+        description: '不编译luci-app-dockerman'
         required: true
         default: false
         type: boolean
