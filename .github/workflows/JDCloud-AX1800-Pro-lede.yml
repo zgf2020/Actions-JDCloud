@@ -17,7 +17,7 @@ on:
       TEMP:
         description: '在luci上显示soc状态和wifi 温度'
         required: true
-        default: true
+        default: false
         type: boolean
       NO_DOCKERMAN:
         description: '不编译luci-app-dockerman'
@@ -114,7 +114,7 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_P2_SH
         
     - name: 显示CPU状态和无线温度
-      if: github.event.inputs.TEMP == 'False'
+      if: github.event.inputs.TEMP == 'true'
       run: |
         cp JDCloud-AX1800-Pro/show-soc-status-on-luci.patch openwrt/feeds/luci/show-soc-status-on-luci.patch
         cd openwrt/feeds/luci
