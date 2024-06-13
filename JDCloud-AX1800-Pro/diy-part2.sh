@@ -45,6 +45,3 @@ sed -i 's/+luci-theme-bootstrap/ /g' feeds/luci/collections/luci/Makefile
 sed -i "/<tr><td width=\"33%\"><%:Load Average%>/a \ \t\t<tr><td width=\"33%\"><%:CPU Temperature%></td><td><%=luci.sys.exec(\"sed 's/../&./g' /sys/class/thermal/thermal_zone0/temp|cut -c1-4\")%></td></tr>" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm |grep Temperature
 echo "Add CPU Temperature in Admin Index OK====================="
-
-#6. Add NSS drivers support
-git clone https://github.com/qosmio/nss-packages.git package/nss-packages
