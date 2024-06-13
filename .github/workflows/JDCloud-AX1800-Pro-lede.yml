@@ -16,12 +16,12 @@ on:
     inputs:
       TEMP:
         description: '在luci上显示soc状态和wifi 温度'
-        required: true
+        required: false
         default: false
         type: boolean
       NO_DOCKERMAN:
         description: '不编译luci-app-dockerman'
-        required: true
+        required: false
         default: false
         type: boolean
       ssh:
