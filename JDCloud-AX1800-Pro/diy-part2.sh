@@ -31,8 +31,11 @@ git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat.git package/luci-th
 #git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
 #rm -rf ../lean/luci-theme-argon
 
-#3添加mosdns
+#3.添加mosdns
 # 移除要替换的包
 rm -rf feeds/packages/net/mosdns
 rm -rf feeds/luci/applications/luci-app-mosdns
 git clone --depth=1 https://github.com/sbwml/luci-app-mosdns package/luci-app-mosdns
+
+#4.去除默认主题
+sed -i 's/+luci-theme-bootstrap/ /g' feeds/luci/collections/luci/Makefile
