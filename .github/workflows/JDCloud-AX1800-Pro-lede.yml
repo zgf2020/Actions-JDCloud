@@ -33,7 +33,7 @@ on:
 
 env:
   ###############手动修改##############
-  OPENWRT_NAME: Microyin
+  OPENWRT_NAME: Lede
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
