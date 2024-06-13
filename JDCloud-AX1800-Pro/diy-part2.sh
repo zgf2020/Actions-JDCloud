@@ -47,4 +47,4 @@ cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm |g
 echo "Add CPU Temperature in Admin Index OK====================="
 
 #6. Add NSS drivers support
-git clone https://github.com/robimarko/nss-packages package/nss-packages
+git clone https://github.com/qosmio/nss-packages.git package/nss-packages
