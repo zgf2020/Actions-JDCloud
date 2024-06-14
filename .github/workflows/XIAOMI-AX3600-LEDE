@@ -190,7 +190,7 @@ jobs:
         touch release.txt
         echo "- 使用源码：${{ env.REPO_URL }}" >> release.txt
         echo "- 登录地址：${{ env.IP_ADDR }}" >> release.txt
-        echo "- 注意AX1800规格的5G无线不支持160MHz频宽" >> release.txt
+        # echo "- 注意AX3600规格的5G无线支持160MHz频宽" >> release.txt
         if [[ "${{ env.SHOW_TEMP }}" == '-show_temp' ]]; then
                 echo "- 显示CPU状态和无线温度" >> release.txt
         else
