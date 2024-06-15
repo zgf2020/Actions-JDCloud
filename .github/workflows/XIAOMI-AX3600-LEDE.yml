@@ -55,6 +55,26 @@ jobs:
     steps:
     - name: 检查项目分支
       uses: actions/checkout@main
+      with:
+          fetch-depth: 0
+
+    - name: 缓存APT包
+      uses: actions/cache@v2
+      with:
+        path: /var/cache/apt
+        key: ${{ runner.os }}-apt-${{ hashFiles('**/apt.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-
+    
+    - name: 缓存工具链和下载文件
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.ccache
+          /workdir/openwrt/dl
+        key: ${{ runner.os }}-openwrt-${{ hashFiles('**/feeds.conf.default') }}-${{ hashFiles('**/xiaomi/ax3600.config') }}
+        restore-keys: |
+          ${{ runner.os }}-openwrt-
       
     - name: 初始化编译环境
       env:
