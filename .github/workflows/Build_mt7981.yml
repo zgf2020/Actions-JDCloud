@@ -154,7 +154,7 @@ jobs:
         body_path: release.txt
 
     - name: Delete older releases
-      uses: ncipollo/release-action@v1.11.7
+      uses: cipollo/release-action@v1
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
         keep_latest: 5
