@@ -15,11 +15,6 @@ on:
   workflow_dispatch:
     inputs:
       TEMP:
-        description: '在luci上显示soc状态和wifi 温度'
-        required: false
-        default: false
-        type: boolean
-      NO_DOCKERMAN:
         description: '不编译luci-app-dockerman'
         required: true
         default: true
@@ -56,25 +51,6 @@ jobs:
     - name: 检查项目分支
       uses: actions/checkout@main
       with:
-          fetch-depth: 0
-
-    - name: 缓存APT包
-      uses: actions/cache@v2
-      with:
-        path: /var/cache/apt
-        key: ${{ runner.os }}-apt-${{ hashFiles('**/apt.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-apt-
-    
-    - name: 缓存工具链和下载文件
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.ccache
-          /workdir/openwrt/dl
-        key: ${{ runner.os }}-openwrt-${{ hashFiles('**/feeds.conf.default') }}-${{ hashFiles('**/xiaomi/ax3600.config') }}
-        restore-keys: |
-          ${{ runner.os }}-openwrt-
       
     - name: 初始化编译环境
       env:
@@ -110,6 +86,14 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
+    - name: Cache
+      uses: HiGarfield/cachewrtbuild@main
+      with:
+        ccache: 'false'
+        clean: 'false'
+        mixkey: 'aarch64'
+        prefix: ${{ github.workspace }}/openwrt
         
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
@@ -211,11 +195,6 @@ jobs:
         echo "- 使用源码：${{ env.REPO_URL }}" >> release.txt
         echo "- 登录地址：${{ env.IP_ADDR }}" >> release.txt
         # echo "- 注意AX3600规格的5G无线支持160MHz频宽" >> release.txt
-        if [[ "${{ env.SHOW_TEMP }}" == '-show_temp' ]]; then
-                echo "- 显示CPU状态和无线温度" >> release.txt
-        else
-                echo "- 不显示CPU状态和无线温度" >> release.txt
-        fi
         if [[ "${{ env.BUILD_DOCKERMAN }}" == '-docker' ]]; then
                 echo "- 已编译luci-app-dockerman" >> release.txt
         else
