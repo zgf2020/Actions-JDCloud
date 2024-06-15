@@ -153,8 +153,8 @@ jobs:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
 
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.2.1
+    - name: Delete older releases
+      uses: dev-drprasad/delete-older-releases@v1.0.0
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
         keep_latest: 5
