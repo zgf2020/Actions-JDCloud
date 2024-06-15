@@ -61,7 +61,7 @@ jobs:
       with:
         ccache: 'false'
         clean: 'false'
-        mixkey: 'aarch64'
+        mixkey: 'MT7981'
         prefix: ${{ github.workspace }}/ImmortalWrt
 
     - name: Load custom feeds
