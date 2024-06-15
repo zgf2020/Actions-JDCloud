@@ -99,6 +99,7 @@ jobs:
       run: |
         cd ImmortalWrt
         echo -e "$(nproc) thread compile"
+        make -j$(nproc) || make -j1 V=s
         echo "status=success" >> $GITHUB_OUTPUT
         sed -nE 's/.*(192.168\.[0-9]+\.[0-9]+).*/\1/p' package/base-files/files/bin/config_generate | head -n 1 > IP_ADDR
         [ -s IP_ADDR ] && echo "IP_ADDR=$(cat IP_ADDR)" >> $GITHUB_ENV
