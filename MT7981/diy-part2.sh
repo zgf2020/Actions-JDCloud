@@ -22,18 +22,18 @@ find ./ | grep Makefile | grep luci-app-mosdns | xargs rm -f
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 
 # Replace luci-app-ssr-plus & Depends
-git clone --depth=1 -b master https://github.com/fw876/helloworld
-Replace_package="xray-core xray-plugin v2ray-core v2ray-plugin hysteria ipt2socks microsocks redsocks2 shadowsocks-rust chinadns-ng dns2socks dns2tcp naiveproxy shadowsocksr-libev simple-obfs tcping tuic-client"
-for a in ${Replace_package}
-do
-	echo "Replace_package=$a"
- 	rm -rf feeds/packages/net/"$a"
-	cp -r helloworld/"$a" feeds/packages/net
-done
-rm -rf feeds/luci/applications/luci-app-ssr-plus
-cp -r helloworld/luci-app-ssr-plus feeds/luci/applications
-cp -r helloworld/shadow-tls package
-rm -rf helloworld
+# git clone --depth=1 -b master https://github.com/fw876/helloworld
+# Replace_package="xray-core xray-plugin v2ray-core v2ray-plugin hysteria ipt2socks microsocks redsocks2 shadowsocks-rust chinadns-ng dns2socks dns2tcp naiveproxy shadowsocksr-libev simple-obfs tcping tuic-client"
+# for a in ${Replace_package}
+# do
+# 	echo "Replace_package=$a"
+#  	rm -rf feeds/packages/net/"$a"
+# 	cp -r helloworld/"$a" feeds/packages/net
+# done
+# rm -rf feeds/luci/applications/luci-app-ssr-plus
+# cp -r helloworld/luci-app-ssr-plus feeds/luci/applications
+# cp -r helloworld/shadow-tls package
+# rm -rf helloworld
 
 sed -i 's/192.168.1.1/10.10.10.1/g' package/base-files/files/bin/config_generate
 
