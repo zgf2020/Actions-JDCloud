@@ -92,7 +92,7 @@ jobs:
       with:
         ccache: 'false'
         clean: 'false'
-        mixkey: 'aarch64'
+        mixkey: 'AX3600'
         prefix: ${{ github.workspace }}/openwrt
         
     - name: 加载feeds.conf.default & DIY_P1_SH
