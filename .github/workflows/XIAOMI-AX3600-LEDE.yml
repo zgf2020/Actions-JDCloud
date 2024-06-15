@@ -50,7 +50,6 @@ jobs:
     steps:
     - name: 检查项目分支
       uses: actions/checkout@main
-      with:
       
     - name: 初始化编译环境
       env:
