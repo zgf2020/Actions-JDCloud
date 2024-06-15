@@ -42,6 +42,11 @@ git clone --depth=1 https://github.com/sbwml/luci-app-mosdns package/luci-app-mo
 sed -i 's/+luci-theme-bootstrap/ /g' feeds/luci/collections/luci/Makefile
 
 #5.添加主页的CPU温度显示
-sed -i "/<tr><td width=\"33%\"><%:Load Average%>/a \ \t\t<tr><td width=\"33%\"><%:CPU Temperature%></td><td><%=luci.sys.exec(\"sed 's/../&./g' /sys/class/thermal/thermal_zone0/temp|cut -c1-4\")%></td></tr>" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
+#sed -i "/<tr><td width=\"33%\"><%:Load Average%>/a \ \t\t<tr><td width=\"33%\"><%:CPU Temperature%></td><td><%=luci.sys.exec(\"sed 's/../&./g' /sys/class/thermal/thermal_zone0/temp|cut -c1-4\")%></td></tr>" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
+#cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm |grep Temperature
+#echo "Add CPU Temperature in Admin Index OK====================="
+
+#6.添加主页编译作者
+sed -i '/<\/table>/i \ \t\t<tr><td width="33%">编译作者</td><td>Microyin</td></tr>' feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm |grep Temperature
-echo "Add CPU Temperature in Admin Index OK====================="
+echo "添加编译作者OK====================="
