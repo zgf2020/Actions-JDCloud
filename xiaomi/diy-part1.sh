@@ -16,4 +16,5 @@
 # Add a feed source
 git clone https://github.com/kenzok8/openwrt-packages package/kenzo
 git clone https://github.com/kenzok8/small package/small
-git clone https://github.com/qosmio/nss-packages.git package/nss-packages
+# git clone https://github.com/qosmio/nss-packages.git package/nss-packages
+git clone https://github.com/robimarko/nss-packages.git feeds/nss-packages
