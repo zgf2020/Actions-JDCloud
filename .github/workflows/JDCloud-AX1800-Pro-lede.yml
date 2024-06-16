@@ -15,11 +15,6 @@ on:
   workflow_dispatch:
     inputs:
       TEMP:
-        description: '在luci上显示soc状态和wifi 温度'
-        required: false
-        default: false
-        type: boolean
-      NO_DOCKERMAN:
         description: '不编译luci-app-dockerman'
         required: true
         default: true
@@ -90,6 +85,14 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
+     - name: Cache
+      uses: HiGarfield/cachewrtbuild@main
+      with:
+        ccache: 'false'
+        clean: 'false'
+        mixkey: 'AX1800-PRO'
+        prefix: ${{ github.workspace }}/openwrt   
         
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
