@@ -63,5 +63,10 @@ sed -i 's/"admin"/"admin", "services"/g; s/admin\//admin\/services\//g' feeds/lu
 sed -i 's/admin\//admin\/services\//g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/*.htm
 sed -i 's|admin\\|admin\\/services\\|g' feeds/luci/applications/luci-app-dockerman/luasrc/view/dockerman/container.htm
 
-# 添加缺少依赖
-git clone https://github.com/openwrt/firewall4.git
+# 添加删除缺少依赖
+# git clone https://github.com/openwrt/firewall4.git package/firewall4
+sed -i 's/ +firewall4//g' package/kenzo/homeproxy/Makefile
+sed -i 's/ +kmod-nft-tproxy//g' package/kenzo/homeproxy/Makefile
+sed -i 's/ +firewall4//g' package/kenzo/luci-app-homeproxy/Makefile
+sed -i 's/ +kmod-nft-tproxy//g' package/kenzo/luci-app-homeproxy/Makefile
+
