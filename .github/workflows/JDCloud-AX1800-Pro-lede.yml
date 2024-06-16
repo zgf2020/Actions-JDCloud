@@ -101,11 +101,11 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
         
-    - name: 应用patch & 更新安装 feeds
+   - name: 应用patch & 更新安装 feeds
       run: |
-        cp JDCloud-AX1800-Pro/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch openwrt/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
+  #      cp JDCloud-AX1800-Pro/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch openwrt/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
         cd openwrt
-        git apply 0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
+  #      git apply 0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
         ./scripts/feeds update -a
         ./scripts/feeds install -a   
         
