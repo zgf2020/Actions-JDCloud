@@ -29,7 +29,7 @@ on:
 env:
   ###############手动修改##############
   OPENWRT_NAME: Lede
-  REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/Microyin823/lede
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: JDCloud-AX1800-Pro/ax1800pro_nss.config
