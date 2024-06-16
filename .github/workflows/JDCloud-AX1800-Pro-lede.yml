@@ -110,13 +110,6 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
         
-    - name: 显示CPU状态和无线温度
-      if: github.event.inputs.TEMP == 'true'
-      run: |
-        cp JDCloud-AX1800-Pro/show-soc-status-on-luci.patch openwrt/feeds/luci/show-soc-status-on-luci.patch
-        cd openwrt/feeds/luci
-        git apply show-soc-status-on-luci.patch
-        
     - name: 取消编译dockerman
       if: github.event.inputs.NO_DOCKERMAN == 'true'
       run: |
