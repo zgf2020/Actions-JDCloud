@@ -84,7 +84,7 @@ jobs:
       run: echo "CCACHE_DIR=/workdir/.ccache" >> $GITHUB_ENV
 
     - name: Restore ccache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: /workdir/.ccache
         key: ${{ runner.os }}-ccache-${{ hashFiles('**/*.c', '**/*.h', 'openwrt/.config') }}-JDCloud-AX1800-Pro
