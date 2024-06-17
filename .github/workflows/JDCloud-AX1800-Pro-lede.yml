@@ -7,7 +7,6 @@
 # https://github.com/P3TERX/Actions-OpenWrt
 # Description: Build OpenWrt using GitHub Actions
 #
-###############手动修改##############
 name: JDCloud-AX1800-Pro-lede
 
 on:
@@ -23,11 +22,8 @@ on:
         description: 'SSH connection to Actions'
         required: false
         default: 'false'
-#  schedule:
-#    - cron: 0 16 * * *
 
 env:
-  ###############手动修改##############
   OPENWRT_NAME: Lede
   REPO_URL: https://github.com/Microyin823/lede
   REPO_BRANCH: master
@@ -46,11 +42,11 @@ jobs:
 
     permissions:
       contents: write
-    
+
     steps:
     - name: 检查项目分支
-      uses: actions/checkout@main
-      
+      uses: actions/checkout@v2
+
     - name: 初始化编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -63,22 +59,29 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
-        
+
     - name: 清理磁盘空间(Ubuntu)
-      uses: jlumbroso/free-disk-space@main
+      uses: jlumbroso/free-disk-space@v1
       with:
-        # this might remove tools that are actually needed,
-        # when set to "true" but frees about 6 GB
         tool-cache: true
-        
-        # all of these default to true, but feel free to set to
-        # "false" if necessary for your workflow
         android: false
         dotnet: false
         haskell: false
         large-packages: false
         swap-storage: false
-        
+
+    - name: 设置缓存路径
+      id: cache-path
+      run: echo "CCACHE_DIR=/workdir/.ccache" >> $GITHUB_ENV
+
+    - name: Restore ccache
+      uses: actions/cache@v2
+      with:
+        path: /workdir/.ccache
+        key: ${{ runner.os }}-ccache-${{ hashFiles('**/*.c', '**/*.h', 'openwrt/.config') }}-JDCloud-AX1800-Pro
+        restore-keys: |
+          ${{ runner.os }}-ccache-JDCloud-AX1800-Pro
+
     - name: 下载固件源码
       working-directory: /workdir
       run: |
@@ -94,14 +97,14 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: Cache
-      uses: HiGarfield/cachewrtbuild@main
+    - name: Cache OpenWrt build root
+      uses: actions/cache@v2
       with:
-        ccache: 'false'
-        clean: 'false'
-        mixkey: 'AX1800-PRO'
-        prefix: ${{ github.workspace }}/openwrt   
-        
+        path: openwrt/tmp
+        key: ${{ runner.os }}-openwrt-${{ hashFiles('**/*.c', '**/*.h', 'openwrt/.config') }}-JDCloud-AX1800-Pro
+        restore-keys: |
+          ${{ runner.os }}-openwrt-JDCloud-AX1800-Pro
+
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
@@ -110,27 +113,27 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_P1_SH
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-               
+
     - name: 加载config & DIY_P2_SH
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        
+
     - name: 取消编译dockerman
-      if: github.event.inputs.NO_DOCKERMAN == 'true'
+      if: github.event.inputs.TEMP == 'true'
       run: |
         cd openwrt
         sed -i '/CONFIG_PACKAGE_luci-app-dockerman=y/d' .config
-        
+
     - name: SSH链接管理
       uses: P3TERX/ssh2actions@v1.0.0
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        
+
     - name: 下载安装包
       id: package
       run: |
@@ -139,7 +142,7 @@ jobs:
         make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-        
+
     - name: 编译固件
       id: compile
       run: |
@@ -164,52 +167,32 @@ jobs:
         fi
         echo "FILE_DATE=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
-        
+
     - name: 查看磁盘使用情况
       if: (!cancelled())
       run: df -hT
-      
+
     - name: 整理文件并重命名
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
-      run: | 
+      run: |
         cd openwrt/bin/targets/*/*
         rm -rf packages
         sudo -E apt-get -qq install rename
         rename 's/.*${{ env.DEVICE_NAME }}/${{ env.FILE_DATE }}-${{ env.OPENWRT_NAME }}-${{ env.DEVICE_NAME }}${{ env.BUILD_DOCKERMAN }}/' *
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
-        
+
     - name: 打包上传固件到Actions Artifacts
-      uses: actions/upload-artifact@main
+      uses: actions/upload-artifact@v2
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
         name: ${{ env.FILE_DATE }}-${{ env.OPENWRT_NAME }}-${{ env.DEVICE_NAME }}${{ env.BUILD_DOCKERMAN }}
         path: ${{ env.FIRMWARE }}
-        
+
     - name: 生成固件Release标签
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
         touch release.txt
         echo "- 使用源码：${{ env.REPO_URL }}" >> release.txt
-        echo "- 登录地址：${{ env.IP_ADDR }}" >> release.txt
-        echo "- 注意AX1800规格的5G无线不支持160MHz频宽" >> release.txt
-        if [[ "${{ env.BUILD_DOCKERMAN }}" == '-docker' ]]; then
-                echo "- 已编译luci-app-dockerman" >> release.txt
-        else
-                echo "- 未编译luci-app-dockerman" >> release.txt
-        fi
-        echo "release_tag=${{ env.FILE_DATE }}-${{ env.OPENWRT_NAME }}-${{ env.DEVICE_NAME }}${{ env.BUILD_DOCKERMAN }}" >> $GITHUB_OUTPUT
-        echo "status=success" >> $GITHUB_OUTPUT
-        
-    - name: 发布固件至Release
-      uses: softprops/action-gh-release@master
-      if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        files: ${{ env.FIRMWARE }}/*
-        name: ${{ env.FILE_DATE }}-${{ env.OPENWRT_NAME }}-${{ env.DEVICE_NAME }}${{ env.BUILD_DOCKERMAN }}
-        tag_name: ${{ steps.tag.outputs.release_tag }}
-        body_path: release.txt
