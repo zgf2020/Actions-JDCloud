@@ -553,19 +553,19 @@ index ead1fb8f0f..6dd9df517e 100644
 +++ b/target/linux/qualcommax/ipq60xx/base-files/etc/board.d/02_network
 @@ -12,6 +12,7 @@ ipq60xx_setup_interfaces()
  
-	 case "$board" in
-	 glinet,gl-ax1800|\
-	 glinet,gl-axt1800|\
-	 linksys,mr7350|\
-	 qihoo,360v6|\
+	case "$board" in
+	glinet,gl-ax1800|\
+	glinet,gl-axt1800|\
+	linksys,mr7350|\
+	qihoo,360v6|\
 +	jdc,ax1800-pro|\	
-	 xiaomi,rm1800)
+	xiaomi,rm1800)
 diff --git a/target/linux/qualcommax/ipq60xx/base-files/etc/hotplug.d/firmware/11-ath11k-caldata b/target/linux/qualcommax/ipq60xx/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
 index f148438b33..bc30e8cc42 100644
 --- a/target/linux/qualcommax/ipq60xx/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
 +++ b/target/linux/qualcommax/ipq60xx/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
 @@ -15,6 +15,7 @@ case "$FIRMWARE" in
- 	qihoo,360v6)
+ 	xiaomi,rm1800)
  		caldata_extract "0:art" 0x1000 0x10000
  		;;
 +	jdc,ax1800-pro|\
