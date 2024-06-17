@@ -552,12 +552,14 @@ index ead1fb8f0f..6dd9df517e 100644
 --- a/target/linux/qualcommax/ipq60xx/base-files/etc/board.d/02_network
 +++ b/target/linux/qualcommax/ipq60xx/base-files/etc/board.d/02_network
 @@ -12,6 +12,7 @@ ipq60xx_setup_interfaces()
- 
+{
+	local board="$1"
+
 	case "$board" in
 	cmiot,ax18|\
+ +	jdc,ax1800-pro|\
 	qihoo,360v6|\
 	redmi,ax5-*|\
-+	jdc,ax1800-pro|\
 	xiaomi,rm1800)
 diff --git a/target/linux/qualcommax/ipq60xx/base-files/etc/hotplug.d/firmware/11-ath11k-caldata b/target/linux/qualcommax/ipq60xx/base-files/etc/hotplug.d/firmware/11-ath11k-caldata
 index f148438b33..bc30e8cc42 100644
