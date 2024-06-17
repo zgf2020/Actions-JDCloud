@@ -99,7 +99,7 @@ jobs:
       with:
         ccache: 'false'
         clean: 'false'
-        mixkey: 'AX1800-PRO'
+        mixkey: 'X86-LEDE'
         prefix: ${{ github.workspace }}/openwrt   
         
     - name: 加载feeds.conf.default & DIY_P1_SH
