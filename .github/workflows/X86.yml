@@ -85,12 +85,6 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-
-    - name: 应用patch & 更新安装 feeds
-      run: |
-        cp JDCloud-AX1800-Pro/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch openwrt/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
-        cd openwrt
-        git apply 0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
