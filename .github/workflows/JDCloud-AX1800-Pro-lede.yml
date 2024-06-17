@@ -195,11 +195,6 @@ jobs:
         echo "- 使用源码：${{ env.REPO_URL }}" >> release.txt
         echo "- 登录地址：${{ env.IP_ADDR }}" >> release.txt
         echo "- 注意AX1800规格的5G无线不支持160MHz频宽" >> release.txt
-        if [[ "${{ env.SHOW_TEMP }}" == '-show_temp' ]]; then
-                echo "- 显示CPU状态和无线温度" >> release.txt
-        else
-                echo "- 不显示CPU状态和无线温度" >> release.txt
-        fi
         if [[ "${{ env.BUILD_DOCKERMAN }}" == '-docker' ]]; then
                 echo "- 已编译luci-app-dockerman" >> release.txt
         else
