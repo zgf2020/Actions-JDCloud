@@ -15,11 +15,6 @@ on:
   workflow_dispatch:
     inputs:
       TEMP:
-        description: '在luci上显示soc状态和wifi 温度'
-        required: false
-        default: false
-        type: boolean
-      NO_DOCKERMAN:
         description: '不编译luci-app-dockerman'
         required: true
         default: true
@@ -69,21 +64,6 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
         
-    - name: 清理磁盘空间(Ubuntu)
-      uses: jlumbroso/free-disk-space@main
-      with:
-        # this might remove tools that are actually needed,
-        # when set to "true" but frees about 6 GB
-        tool-cache: true
-        
-        # all of these default to true, but feel free to set to
-        # "false" if necessary for your workflow
-        android: false
-        dotnet: false
-        haskell: false
-        large-packages: false
-        swap-storage: false
-        
     - name: 下载固件源码
       working-directory: /workdir
       run: |
@@ -91,34 +71,41 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         
+    - name: 应用patch & 更新安装 feeds
+      run: |
+        cp JDCloud-AX1800-Pro/0002-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch openwrt/JD-Cloud-AX1800-Pro.patch
+        cd openwrt
+        git apply JD-Cloud-AX1800-Pro.patch
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        
+    - name: 设置缓存路径
+      id: cache-path
+      run: echo "CCACHE_DIR=/workdir/.ccache" >> $GITHUB_ENV
+
+    - name: Restore ccache
+      uses: actions/cache@v4
+      with:
+        path: /workdir/.ccache
+        key: ${{ runner.os }}-ccache-${{ hashFiles('**/*.c', '**/*.h', 'openwrt/.config') }}-JDCloud-AX1800-Pro
+        restore-keys: |
+          ${{ runner.os }}-ccache-JDCloud-AX1800-Pro
+        
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
-        
-    - name: 应用patch & 更新安装 feeds
-      run: |
-        cp JDCloud-AX1800-Pro/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch openwrt/0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
-        cd openwrt
-        git apply 0001-ipq60xx-add-support-for-JD-Cloud-AX1800-Pro.patch
         ./scripts/feeds update -a
-        ./scripts/feeds install -a   
-        
+        ./scripts/feeds install -a
+               
     - name: 加载config & DIY_P2_SH
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        
-    - name: 显示CPU状态和无线温度
-      if: github.event.inputs.TEMP == 'true'
-      run: |
-        cp JDCloud-AX1800-Pro/show-soc-status-on-luci.patch openwrt/feeds/luci/show-soc-status-on-luci.patch
-        cd openwrt/feeds/luci
-        git apply show-soc-status-on-luci.patch
         
     - name: 取消编译dockerman
       if: github.event.inputs.NO_DOCKERMAN == 'true'
@@ -197,11 +184,6 @@ jobs:
         echo "- 使用源码：${{ env.REPO_URL }}" >> release.txt
         echo "- 登录地址：${{ env.IP_ADDR }}" >> release.txt
         echo "- 注意AX1800规格的5G无线不支持160MHz频宽" >> release.txt
-        if [[ "${{ env.SHOW_TEMP }}" == '-show_temp' ]]; then
-                echo "- 显示CPU状态和无线温度" >> release.txt
-        else
-                echo "- 不显示CPU状态和无线温度" >> release.txt
-        fi
         if [[ "${{ env.BUILD_DOCKERMAN }}" == '-docker' ]]; then
                 echo "- 已编译luci-app-dockerman" >> release.txt
         else

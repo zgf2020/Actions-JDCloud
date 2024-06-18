@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 ###############手动修改##############
-name: XIAOMI-AX3600-LEDE
+name: X86-lede
 
 on:
   repository_dispatch:
@@ -32,9 +32,9 @@ env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: xiaomi/ax3600.config
-  DIY_P1_SH: xiaomi/diy-part1.sh
-  DIY_P2_SH: xiaomi/diy-part2.sh
+  CONFIG_FILE: X86/.config
+  DIY_P1_SH: JDCloud-AX1800-Pro/diy-part1.sh
+  DIY_P2_SH: JDCloud-AX1800-Pro/diy-part2.sh
   SSH_ACTIONS: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -85,14 +85,20 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        
+    - name: 初始化 feeds
+      working-directory: /workdir/openwrt
+      run: |
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
 
     - name: Cache
       uses: HiGarfield/cachewrtbuild@main
       with:
         ccache: 'false'
         clean: 'false'
-        mixkey: 'AX3600'
-        prefix: ${{ github.workspace }}/openwrt
+        mixkey: 'X86-LEDE'
+        prefix: ${{ github.workspace }}/openwrt   
         
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
@@ -101,16 +107,14 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
         ./scripts/feeds update -a
-        ./scripts/feeds install -a  
-        
+        ./scripts/feeds install -a
+               
     - name: 加载config & DIY_P2_SH
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a  
         
     - name: 取消编译dockerman
       if: github.event.inputs.NO_DOCKERMAN == 'true'
@@ -188,7 +192,6 @@ jobs:
         touch release.txt
         echo "- 使用源码：${{ env.REPO_URL }}" >> release.txt
         echo "- 登录地址：${{ env.IP_ADDR }}" >> release.txt
-        # echo "- 注意AX3600规格的5G无线支持160MHz频宽" >> release.txt
         if [[ "${{ env.BUILD_DOCKERMAN }}" == '-docker' ]]; then
                 echo "- 已编译luci-app-dockerman" >> release.txt
         else
